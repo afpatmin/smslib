@@ -26,7 +26,7 @@ def send(client: str, to: str, message: str, sql_connection: MySQLConnection):
     cur.execute(query)
     resultMax = cur.fetchone()['sms_count']
     if resultCurrent > resultMax:
-        raise "SMS quota exceeded ({}/{})".format(resultCurrent, resultMax)
+        raise Exception("SMS quota exceeded ({}/{})".format(resultCurrent, resultMax))
 
     cur.execute('SELECT sms_from FROM `boardonh_onboarding_{}`.config WHERE %s LIMIT 1'.format(
         client), (1,))
