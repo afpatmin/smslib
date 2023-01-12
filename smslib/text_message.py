@@ -28,10 +28,15 @@ def send(client: str, to: str, message: str, sql_connection: MySQLConnection):
     if resultCurrent > resultMax:
         raise Exception("SMS quota exceeded ({}/{})".format(resultCurrent, resultMax))
 
-    cur.execute('SELECT sms_from FROM `boardonh_onboarding_{}`.config WHERE %s LIMIT 1'.format(
-        client), (1,))
-    rs = cur.fetchone()
-    sms_from = rs['sms_from'][0:11]
+    # Set sender to boardon's US number if recepients phone number starts with '1' or '+1'
+    if to.startswith('+1') or to.startswith('1'):
+        sms_from = '18447270141'
+
+    else:
+        cur.execute('SELECT sms_from FROM `boardonh_onboarding_{}`.config WHERE %s LIMIT 1'.format(
+            client), (1,))
+        rs = cur.fetchone()
+        sms_from = rs['sms_from'][0:11]
 
     try:
         sms_id = __send_smsapi(message, to, sms_from)
