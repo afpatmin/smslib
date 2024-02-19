@@ -5,7 +5,6 @@ from mysql.connector.connection import MySQLConnection
 import os
 import json
 
-
 def send(client: str, to: str, message: str, sql_connection: MySQLConnection):
     '''
     Send a text message using SMSAPI/Link Mobility by default or fallback on Mailjet API
@@ -38,10 +37,13 @@ def send(client: str, to: str, message: str, sql_connection: MySQLConnection):
         rs = cur.fetchone()
         sms_from = rs['sms_from'][0:11]
 
-    try:
-        sms_id = __send_smsapi(message, to, sms_from)
-    except Exception:
-        sms_id = __send_mailjet(message, to, sms_from)
+    if sms_from == 'SHB':
+        sms_id = __send_lekab(message, to, sms_from)        
+    else:
+        try:
+            sms_id = __send_smsapi(message, to, sms_from)
+        except Exception:
+            sms_id = __send_mailjet(message, to, sms_from)
 
     cur.execute(
         "INSERT INTO boardonh_onboarding.sms_log (sms_id, client) VALUES (%s, %s)", (sms_id, client))
@@ -50,6 +52,23 @@ def send(client: str, to: str, message: str, sql_connection: MySQLConnection):
 
     return sms_id
 
+
+def __send_lekab(message, phone, sms_from):    
+    response = requests.post('https://secure.lekab.com/restsms/api/send/single', data=json.dumps({
+        'apikey': os.environ['BOARDON_LEKAB_API_KEY'],
+        'username': os.environ['BOARDON_LEKAB_USERNAME'],
+        'password': os.environ['BOARDON_LEKAB_PASSWORD'],
+        'from': sms_from,
+        'to': phone,
+        'message': message,
+    }), headers={
+        'Content-Type': 'application/json'     
+    })
+    data = response.json()
+    if response.status_code > 299:
+        raise Exception(response.text)
+    
+    return data['id']
 
 def __send_smsapi(message, phone, sms_from):
     response = requests.post('https://api.smsapi.se/sms.do', data=json.dumps({
@@ -87,3 +106,4 @@ def __send_mailjet(message, sms_to, sms_from):
         raise Exception(data)
 
     return data['ID']
+
