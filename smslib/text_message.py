@@ -71,11 +71,15 @@ def __send_lekab(message, phone, sms_from):
     return data['id']
 
 def __send_smsapi(message, phone, sms_from):
-    response = requests.post('https://api.smsapi.se/sms.do', data=json.dumps({
-        'from': sms_from,
-        'to': phone.replace('+', ''),
-        'message': message,
-        'format': 'json'
+    response: requests.Response = requests.post('https://api.linkmobility.com/sms/v1/messages', data=json.dumps({
+        'recipient': phone,
+        'content': {
+            'text': message,
+            'options': {
+                'sms.sender': sms_from,
+                'sms.obfuscate': 'ContentAndRecipient',
+            }
+        },
     }), headers={
         'Content-Type': 'application/json',
         'Authorization': 'Bearer {}'.format(os.environ['BOARDON_SMSAPI_TOKEN'])
@@ -87,7 +91,7 @@ def __send_smsapi(message, phone, sms_from):
     elif 'error' in data:
         raise Exception(data['message'])
 
-    return data['list'][0]['id']
+    return data['messages'][0]['messageId']
 
 
 def __send_mailjet(message, sms_to, sms_from):
