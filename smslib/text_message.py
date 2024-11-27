@@ -82,13 +82,15 @@ def __send_smsapi(message, phone, sms_from):
 
     else:
         token = token_response.json().get('access_token')
-        print(token);
+        print(token)
         print(phone)
+        print(sms_from)
         response: requests.Response = requests.post('https://api.linkmobility.com/sms/v1/messages', data=json.dumps({
         'recipient': phone,
         'content': {
             'text': message,
             'options': {
+                'sms.encoding': 'AutoDetect',
                 'sms.sender': sms_from,
                 'sms.obfuscate': 'ContentAndRecipient',
             }
