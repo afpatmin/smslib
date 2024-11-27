@@ -78,6 +78,7 @@ def __send_smsapi(message, phone, sms_from):
     })
     
     if token_response.status_code > 299:
+        print(token_response.text)
         raise Exception(token_response.text)
 
     else:
@@ -98,6 +99,7 @@ def __send_smsapi(message, phone, sms_from):
 
         data = response.json()
         if response.status_code > 299:
+            print(response.text)
             raise Exception(response.text)
         elif 'error' in data:
             raise Exception(data['message'])
