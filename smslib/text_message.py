@@ -78,11 +78,12 @@ def __send_smsapi(message, phone, sms_from):
     })
     
     if token_response.status_code > 299:
-        print(token_response.text)
         raise Exception(token_response.text)
 
     else:
         token = token_response.json().get('access_token')
+        print(token);
+        print(phone)
         response: requests.Response = requests.post('https://api.linkmobility.com/sms/v1/messages', data=json.dumps({
         'recipient': phone,
         'content': {
