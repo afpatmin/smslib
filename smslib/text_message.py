@@ -70,8 +70,19 @@ def __send_lekab(message, phone, sms_from):
     
     return data['id']
 
-def __send_smsapi(message, phone, sms_from):
-    response: requests.Response = requests.post('https://api.linkmobility.com/sms/v1/messages', data=json.dumps({
+def __send_smsapi(message, phone, sms_from):    
+    token_response = requests.post('https://sso.linkmobility.com/auth/realms/CPaaS/protocol/openid-connect/token', data={
+        'grant_type': 'client_credentials',
+        'client_id': os.environ['BOARDON_MYLINK_CLIENT_ID'],
+        'client_secret': os.environ['BOARDON_MYLINK_CLIENT_SECRET']
+    })
+    
+    if token_response.status_code > 299:
+        raise Exception(token_response.text)
+
+    else:
+        token = token_response.json().get('access_token')
+        response: requests.Response = requests.post('https://api.linkmobility.com/sms/v1/messages', data=json.dumps({
         'recipient': phone,
         'content': {
             'text': message,
@@ -80,18 +91,18 @@ def __send_smsapi(message, phone, sms_from):
                 'sms.obfuscate': 'ContentAndRecipient',
             }
         },
-    }), headers={
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer {}'.format(os.environ['BOARDON_SMSAPI_TOKEN'])
-    })
+        }), headers={
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer {}'.format(token)
+        })
 
-    data = response.json()
-    if response.status_code > 299:
-        raise Exception(response.text)
-    elif 'error' in data:
-        raise Exception(data['message'])
+        data = response.json()
+        if response.status_code > 299:
+            raise Exception(response.text)
+        elif 'error' in data:
+            raise Exception(data['message'])
 
-    return data['messages'][0]['messageId']
+        return data['messages'][0]['messageId']        
 
 
 def __send_mailjet(message, sms_to, sms_from):
