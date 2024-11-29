@@ -99,7 +99,7 @@ def __send_smsapi(message, phone, sms_from):
 
         print(data)
         
-        response: requests.Response = requests.post('https://api.linkmobility.com/sms/v1/messages', data=data, headers={
+        response: requests.Response = requests.post('https://api.linkmobility.com/sms/v1', data=data, headers={
             'Content-Type': 'application/json',
             'Authorization': 'Bearer {}'.format(token)
         })
