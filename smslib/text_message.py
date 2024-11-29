@@ -85,7 +85,7 @@ def __send_smsapi(message, phone, sms_from):
         data = json.dumps(            
             [
                 {
-                "recipient": "+46709145324",
+                "recipient": phone,
                 "content": {
                 "text": "test",
                 "options": {
