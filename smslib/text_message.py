@@ -90,7 +90,7 @@ def __send_smsapi(message, phone, sms_from):
                 "text": "test",
                 "options": {
                     "sms.encoding": "AutoDetect",
-                    "sms.sender": "boardon",
+                    "sms.sender": sms_from,
                     "sms.obfuscate": "ContentAndRecipient"
                 }
                 },
