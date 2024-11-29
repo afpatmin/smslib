@@ -90,7 +90,8 @@ def __send_smsapi(message, phone, sms_from):
                         'text': message,
                         'options': {
                             'sms.encoding': 'AutoDetect',
-                            'sms.sender': sms_from,                            
+                            'sms.sender': sms_from,
+                            "sms.obfuscate": "ContentAndRecipient"
                         },
                         'callback': {
                             'mode': 'None',                
