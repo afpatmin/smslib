@@ -82,22 +82,22 @@ def __send_smsapi(message, phone, sms_from):
 
     else:
         token = token_response.json().get('access_token')
-        data = json.dumps(
+        data = json.dumps(            
             [
                 {
-                    'recipient': phone,
-                    'content': {
-                        'text': message,
-                        'options': {
-                            'sms.encoding': 'AutoDetect',
-                            'sms.sender': sms_from,
-                            "sms.obfuscate": "ContentAndRecipient"
-                        },
-                        'callback': {
-                            'mode': 'None',                
-                        }
-                    },
+                "recipient": "+46709145324",
+                "content": {
+                "text": "test",
+                "options": {
+                    "sms.encoding": "AutoDetect",
+                    "sms.sender": "boardon",
+                    "sms.obfuscate": "ContentAndRecipient"
                 }
+                },
+                "callback": {
+                    "mode": "None"
+                }
+            }
             ])
 
         print(data)
