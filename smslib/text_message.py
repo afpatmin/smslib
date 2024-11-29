@@ -86,7 +86,7 @@ def __send_smsapi(message, phone, sms_from):
         data = json.dumps({
         'recipient': phone,
         'content': {
-            'text': message,
+            'text': "test",
             'options': {
                 'sms.encoding': 'AutoDetect',
                 'sms.sender': sms_from,                
