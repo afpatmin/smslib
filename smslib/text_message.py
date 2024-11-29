@@ -83,7 +83,7 @@ def __send_smsapi(message, phone, sms_from):
     else:
         token = token_response.json().get('access_token')
 
-        data = json.dumps({
+        data = {
         'recipient': phone,
         'content': {
             'text': "test",
@@ -95,7 +95,7 @@ def __send_smsapi(message, phone, sms_from):
                 'mode': 'None',                
             }
         },
-        })
+        }
 
         print(data)
         
