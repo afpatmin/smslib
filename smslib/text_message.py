@@ -82,8 +82,8 @@ def __send_smsapi(message, phone, sms_from):
 
     else:
         token = token_response.json().get('access_token')
-        
-        response: requests.Response = requests.post('https://api.linkmobility.com/sms/v1/messages', data=json.dumps({
+
+        data = json.dumps({
         'recipient': phone,
         'content': {
             'text': message,
@@ -93,13 +93,20 @@ def __send_smsapi(message, phone, sms_from):
                 'sms.obfuscate': 'ContentAndRecipient',
             }
         },
-        }), headers={
+        })
+
+        print(data)
+        
+        response: requests.Response = requests.post('https://api.linkmobility.com/sms/v1/messages', data=data, headers={
             'Content-Type': 'application/json',
             'Authorization': 'Bearer {}'.format(token)
         })
 
+        
+
         data = response.json()
         if response.status_code > 299:
+            print(response.status_code)
             print(response.text)
             raise Exception(response.text)
         elif 'error' in data:
