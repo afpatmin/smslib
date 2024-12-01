@@ -98,16 +98,12 @@ def __send_smsapi(message, phone, sms_from):
                     "mode": "None"
                 }
             }
-            ])
-
-        print(data)
+            ])        
         
         response: requests.Response = requests.post('https://api.linkmobility.com/sms/v1/messages', data=data, headers={
             'Content-Type': 'application/json',
             'Authorization': 'Bearer {}'.format(token)
         })
-
-        
 
         data = response.json()
         if response.status_code > 299:
